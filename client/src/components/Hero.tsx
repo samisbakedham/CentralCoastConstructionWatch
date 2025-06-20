@@ -56,7 +56,7 @@ export default function Hero() {
               <h3 className="font-semibold text-lg mb-2">
                 {stats?.newUnits || 0} New Units
               </h3>
-              <p className="text-primary-100">Residential units in development</p>
+              <p className="text-[#012b80]">Residential units in development</p>
             </div>
           </div>
         </div>
