@@ -30,7 +30,7 @@ export default function Hero() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Track Construction Progress in Your Community
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl mb-8 max-w-3xl mx-auto text-[#002e85]">
             Stay informed about residential, commercial, and infrastructure projects across Santa Barbara and San Luis Obispo Counties
           </p>
           
