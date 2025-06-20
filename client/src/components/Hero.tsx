@@ -48,7 +48,7 @@ export default function Hero() {
               <h3 className="font-semibold text-lg mb-2">
                 {stats?.totalInvestment || '$0'} Total Investment
               </h3>
-              <p className="text-primary-100">In current projects</p>
+              <p className="text-[#012b80]">In current projects</p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
