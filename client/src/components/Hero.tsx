@@ -24,7 +24,7 @@ export default function Hero() {
   });
 
   return (
-    <section className="bg-gradient-to-r from-primary-600 to-primary-800 text-white py-12">
+    <section className="bg-gradient-to-r from-primary-600 to-primary-800 py-12 text-[#0006a1]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
