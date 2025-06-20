@@ -18,13 +18,10 @@ export default function Footer() {
               Built by the community, for the community.
             </p>
             <div className="flex space-x-4">
-              <a href="https://github.com" className="text-slate-400 hover:text-white transition-colors">
+              <a href="https://github.com/samsafahi/central-coast-construction-watch" className="text-slate-400 hover:text-white transition-colors" title="View on GitHub">
                 <Github className="text-xl" />
               </a>
-              <a href="https://twitter.com" className="text-slate-400 hover:text-white transition-colors">
-                <Twitter className="text-xl" />
-              </a>
-              <a href="mailto:contact@example.com" className="text-slate-400 hover:text-white transition-colors">
+              <a href="mailto:samsafahi@gmail.com" className="text-slate-400 hover:text-white transition-colors" title="Contact Developer">
                 <Mail className="text-xl" />
               </a>
             </div>
@@ -43,10 +40,10 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4">Resources</h4>
             <ul className="space-y-2 text-slate-300">
-              <li><a href="https://github.com" className="hover:text-white transition-colors">API Documentation</a></li>
-              <li><a href="https://github.com" className="hover:text-white transition-colors">GitHub Repository</a></li>
-              <li><a href="mailto:contact@example.com" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="https://github.com/samsafahi/central-coast-construction-watch#readme" className="hover:text-white transition-colors">API Documentation</a></li>
+              <li><a href="https://github.com/samsafahi/central-coast-construction-watch" className="hover:text-white transition-colors">GitHub Repository</a></li>
+              <li><a href="mailto:samsafahi@gmail.com" className="hover:text-white transition-colors">Contact Us</a></li>
+              <li><a href="https://github.com/samsafahi/central-coast-construction-watch/blob/main/LICENSE" className="hover:text-white transition-colors">MIT License</a></li>
             </ul>
           </div>
         </div>
