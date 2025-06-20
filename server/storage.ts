@@ -237,7 +237,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(residentialDetails).where(eq(residentialDetails.projectId, id));
     
     const result = await db.delete(projects).where(eq(projects.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Residential details operations
@@ -275,7 +275,7 @@ export class DatabaseStorage implements IStorage {
     await db.delete(photos).where(eq(photos.milestoneId, id));
     
     const result = await db.delete(milestones).where(eq(milestones.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Photo operations
@@ -286,35 +286,39 @@ export class DatabaseStorage implements IStorage {
 
   async deletePhoto(id: number): Promise<boolean> {
     const result = await db.delete(photos).where(eq(photos.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Statistics
   async getProjectStats(): Promise<ProjectStats> {
-    const [activeProjectsResult] = await db
-      .select({ count: projects.id })
+    const activeProjectsResult = await db
+      .select()
       .from(projects)
       .where(eq(projects.status, 'under-construction'));
 
-    const [totalInvestmentResult] = await db
+    const totalInvestmentResult = await db
       .select()
       .from(projects);
 
-    const totalInvestment = totalInvestmentResult.reduce((sum, project) => {
-      const cost = project.estimatedCost ? parseFloat(project.estimatedCost) : 0;
-      return sum + cost;
-    }, 0);
+    const totalInvestment = totalInvestmentResult.length > 0 
+      ? totalInvestmentResult.reduce((sum: number, project: any) => {
+          const cost = project.estimatedCost ? parseFloat(project.estimatedCost) : 0;
+          return sum + cost;
+        }, 0)
+      : 0;
 
-    const [newUnitsResult] = await db
+    const newUnitsResult = await db
       .select()
       .from(residentialDetails);
 
-    const newUnits = newUnitsResult.reduce((sum, detail) => {
-      return sum + (detail.totalUnits || 0);
-    }, 0);
+    const newUnits = newUnitsResult.length > 0
+      ? newUnitsResult.reduce((sum: number, detail: any) => {
+          return sum + (detail.totalUnits || 0);
+        }, 0)
+      : 0;
 
     return {
-      activeProjects: activeProjectsResult.count || 0,
+      activeProjects: activeProjectsResult.length,
       totalInvestment: `$${(totalInvestment / 1000000000).toFixed(1)}B`,
       newUnits,
     };
