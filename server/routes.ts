@@ -1,23 +1,92 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertProjectSchema, insertResidentialDetailsSchema, insertMilestoneSchema, insertPhotoSchema } from "@shared/schema";
 import { z } from "zod";
+import session from "express-session";
+import { scrypt, randomBytes, timingSafeEqual } from "crypto";
+import { promisify } from "util";
+
+const scryptAsync = promisify(scrypt);
+
+// Simple admin credentials
+const ADMIN_EMAIL = "samsafahi@gmail.com";
+const ADMIN_PASSWORD_HASH = "c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6.abc123def456ghi789"; // This will be replaced with actual hash
+
+async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString("hex");
+  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${buf.toString("hex")}.${salt}`;
+}
+
+async function comparePasswords(supplied: string, stored: string): Promise<boolean> {
+  const [hashed, salt] = stored.split(".");
+  const hashedBuf = Buffer.from(hashed, "hex");
+  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
+  return timingSafeEqual(hashedBuf, suppliedBuf);
+}
+
+// Simple middleware to check if user is authenticated
+function isAuthenticated(req: any, res: any, next: any) {
+  if (req.session && req.session.isAdmin) {
+    return next();
+  }
+  return res.status(401).json({ message: "Unauthorized" });
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Session setup
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'construction-watch-secret-key-2024',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: false, // Set to true in production with HTTPS
+      maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+  }));
+
+  // Generate admin password hash on startup
+  const adminPasswordHash = await hashPassword("Admin1024$$");
+  console.log("Admin credentials ready");
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.post('/api/login', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      const { email, password } = req.body;
+      
+      if (email === ADMIN_EMAIL && await comparePasswords(password, adminPasswordHash)) {
+        (req.session as any).isAdmin = true;
+        res.json({ 
+          email: ADMIN_EMAIL,
+          role: 'admin'
+        });
+      } else {
+        res.status(401).json({ message: "Invalid credentials" });
+      }
     } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  app.post('/api/logout', (req, res) => {
+    req.session?.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
+  });
+
+  app.get('/api/auth/user', (req, res) => {
+    if ((req.session as any)?.isAdmin) {
+      res.json({ 
+        email: ADMIN_EMAIL,
+        role: 'admin'
+      });
+    } else {
+      res.status(401).json({ message: "Not authenticated" });
     }
   });
 
