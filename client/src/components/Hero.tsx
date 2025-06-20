@@ -40,7 +40,7 @@ export default function Hero() {
               <h3 className="font-semibold text-lg mb-2">
                 {stats?.activeProjects || 0} Active Projects
               </h3>
-              <p className="text-primary-100">Currently under construction</p>
+              <p className="text-[#00308f]">Currently under construction</p>
             </div>
             
             <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6">
