@@ -50,6 +50,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const adminPasswordHash = await hashPassword("Admin1024$$");
   console.log("Admin credentials ready");
 
+  // Seed database with sample data if empty
+  const { seedDatabase } = await import("./seed");
+  try {
+    const existingProjects = await storage.getProjects({ limit: 1 });
+    if (existingProjects.length === 0) {
+      await seedDatabase();
+      console.log("Database seeded with sample projects");
+    }
+  } catch (error) {
+    console.error("Error checking/seeding database:", error);
+  }
+
   // Auth routes
   app.post('/api/login', async (req, res) => {
     try {

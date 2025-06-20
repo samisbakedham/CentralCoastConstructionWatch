@@ -31,15 +31,21 @@ export default function Header() {
                 <Link href="/admin" className="text-slate-700 hover:text-primary-600 font-medium transition-colors">
                   Admin
                 </Link>
-                <a href="/api/logout" className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                <button 
+                  onClick={() => {
+                    fetch('/api/logout', { method: 'POST', credentials: 'include' })
+                      .then(() => window.location.reload());
+                  }}
+                  className="bg-slate-600 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors"
+                >
                   Logout
-                </a>
+                </button>
               </>
             ) : (
-              <a href="/api/login" className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+              <Link href="/auth" className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">
                 <Lock className="mr-2 h-4 w-4 inline" />
                 Admin Login
-              </a>
+              </Link>
             )}
           </nav>
           
